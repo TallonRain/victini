@@ -13,9 +13,7 @@ import random
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 VWHEEL_CHANNEL_ID = int(os.getenv('VWHEEL_CHANNEL_ID'))
-
-# Check to see if we are in debug mode or not
-gettrace = getattr(sys, 'gettrace', None)
+DEBUG_MODE = bool(os.getenv('DEBUG_MODE'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -90,7 +88,7 @@ async def on_ready():
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID) # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
-    if gettrace is None:
+    if not DEBUG_MODE: # only send this message when we are NOT in debug mode
         await v_wheel_channel.send("Tadaaaa~! It's me, Victini~!")
     for role in bot.guilds[0].roles:
         type_roles[role.name] = role.id # fetch the server's roles and put them in a dictionary with the name and ID
