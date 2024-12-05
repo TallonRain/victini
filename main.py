@@ -1,6 +1,7 @@
 import os
 import sys
 import discord
+from discord import app_commands
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import fixup
@@ -21,7 +22,7 @@ intents.message_content = True
 intents.members = True
 intents.presences = True
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents, activity=discord.Game("with the V-Wheeeeeel~!"))
 
 # Set trigger time: Noon PST -> 20:00 UTC (adjust as needed)
 pacific = ZoneInfo("America/Los_Angeles")
@@ -94,6 +95,14 @@ async def on_ready():
     for role in bot.guilds[0].roles:
         type_roles[role.name] = role.id # fetch the server's roles and put them in a dictionary with the name and ID
         print(f"Role Name: {role.name} | Role ID: {role.id}")
+    await bot.tree.sync() # update app_command related stuff on discord's end, but it's sometimes slow
+
+@bot.tree.command(name = "forcespin")
+@app_commands.default_permissions()
+async def forcespin(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    await spin_wheel()
+    await interaction.edit_original_response(content = "Fine, I've spun the V-Wheeeeeel~!")
 
 # fixup addresses a fatal SSL & authentication bug in Discord.py
 fixup.run(bot, DISCORD_TOKEN)
