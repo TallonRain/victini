@@ -1,6 +1,7 @@
 import os
 import sys
 import discord
+from discord import app_commands
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import fixup
@@ -21,7 +22,7 @@ intents.message_content = True
 intents.members = True
 intents.presences = True
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents, activity=discord.Game("with the V-Wheeeeeel~!"))
 
 # Set trigger time: Noon PST -> 20:00 UTC (adjust as needed)
 pacific = ZoneInfo("America/Los_Angeles")
@@ -45,7 +46,7 @@ async def spin_wheel():
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
     vwheel_type = random.choice(const_types) # spiiiiiinnnnnnn
-    await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type} types!")
+    await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type) # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id) # format it as a Discord object so it can be manipulated
     if role is not None:
@@ -94,6 +95,14 @@ async def on_ready():
     for role in bot.guilds[0].roles:
         type_roles[role.name] = role.id # fetch the server's roles and put them in a dictionary with the name and ID
         print(f"Role Name: {role.name} | Role ID: {role.id}")
+    await bot.tree.sync() # update app_command related stuff on discord's end, but it's sometimes slow
+
+@bot.tree.command(name = "forcespin")
+@app_commands.default_permissions()
+async def forcespin(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    await spin_wheel()
+    await interaction.edit_original_response(content = "Fine, I've spun the V-Wheeeeeel~!")
 
 # fixup addresses a fatal SSL & authentication bug in Discord.py
 fixup.run(bot, DISCORD_TOKEN)
