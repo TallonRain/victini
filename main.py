@@ -45,7 +45,7 @@ async def spin_wheel():
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
     vwheel_type = random.choice(const_types) # spiiiiiinnnnnnn
-    await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type} types!")
+    await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type) # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id) # format it as a Discord object so it can be manipulated
     if role is not None:
