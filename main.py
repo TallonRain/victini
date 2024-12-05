@@ -19,7 +19,7 @@ bot = discord.Client(command_prefix='!', intents=intents)
 
 # Set trigger time: Noon PST -> 20:00 UTC (adjust as needed)
 utc = datetime.timezone.utc
-trigger_time = datetime.time(hour=00, minute=30, tzinfo=utc)
+trigger_time = datetime.time(hour=20, minute=00, tzinfo=utc)
 
 class Victini(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -28,7 +28,7 @@ class Victini(commands.Bot):
     async def setup_hook(self) -> None:
         self.spin_wheel.start()
 
-    @tasks.loop(time=datetime.time(hour=0, minute=11))
+    @tasks.loop(time=trigger_time)
     async def spin_wheel(self):
         print("Made it to wheel-spinning!")
 
