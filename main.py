@@ -1,4 +1,5 @@
 import os
+import sys
 import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
@@ -10,6 +11,9 @@ import random
 # Load environment variables from the .env file (if present) and declare the variable
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+
+# Check to see if we are in debug mode or not
+gettrace = getattr(sys, 'gettrace', None)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -25,7 +29,7 @@ v_wheel_channel = None
 
 # list of server roles
 type_roles = {}
-const_types = ["Normal", "Fire", "Water", "Grass", "Electric", "Ice", "Fighting", "Poison", "Ground", "Flying", "Psychic", "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"]
+const_types = ["Normal Type", "Fire Type", "Water Type", "Grass Type", "Electric Type", "Ice Type", "Fighting Type", "Poison Type", "Ground Type", "Flying Type", "Psychic Type", "Bug Type", "Rock Type", "Ghost Type", "Dragon Type", "Dark Type", "Steel Type", "Fairy Type"]
 
 async def setup_hook(self) -> None:
     self.spin_wheel.start()
@@ -84,7 +88,8 @@ async def on_ready():
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(1302838580443615332) # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
-    await v_wheel_channel.send("Tadaaaa~! It's me, Victini~!")
+    if gettrace is None:
+        await v_wheel_channel.send("Tadaaaa~! It's me, Victini~!")
     for role in bot.guilds[0].roles:
         type_roles[role.name] = role.id # fetch the server's roles and put them in a dictionary with the name and ID
         print(f"Role Name: {role.name} | Role ID: {role.id}")
