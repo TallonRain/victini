@@ -11,6 +11,7 @@ import random
 # Load environment variables from the .env file (if present) and declare the variable
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+VWHEEL_CHANNEL_ID = int(os.getenv('VWHEEL_CHANNEL_ID'))
 
 # Check to see if we are in debug mode or not
 gettrace = getattr(sys, 'gettrace', None)
@@ -86,7 +87,7 @@ async def on_ready():
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
     spin_wheel.start()
-    v_wheel_channel = await bot.fetch_channel(1302838580443615332) # channel id, as an int, goes here
+    v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID) # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
     if gettrace is None:
         await v_wheel_channel.send("Tadaaaa~! It's me, Victini~!")
