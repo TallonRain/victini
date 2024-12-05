@@ -18,8 +18,9 @@ Secondary functions include some user-facing commands, invoked using the `!` prf
 
 Currently, you must populate a `.env` file with two values:
 
-- `DISCORD_TOKEN` must be populated with the bot's auth token from the developer portal
-- `VWHEEL_CHANNEL_ID` must have the channel ID of the v-wheel channel
+- `DISCORD_TOKEN`: must be populated with the bot's auth token from the developer portal
+- `VWHEEL_CHANNEL_ID`: must have the channel ID of the v-wheel channel
+- `DEBUG_MODE`: Enable or disable debug mode as a boolean value, `1` or `0` (Disable this with `0` when deploying)
 
 #### Required permissions
 
