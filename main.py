@@ -1,5 +1,4 @@
 import os
-import sys
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
@@ -64,7 +63,7 @@ async def on_message(message):
 
     ## Teeny tini doesn't want to be touched
     if message.content.startswith('!pet'):
-        response = random.randrange(1, 13)
+        response = random.randrange(1, 15)
         case_dict = {
             1: 'Eep!! >~<',
             2: 'Wh-what? What was that for?',
@@ -78,8 +77,17 @@ async def on_message(message):
             10: '*is petted* >///<',
             11: 'Please do not tap on the glass.',
             12: '`Your pet has been forwarded to an automated pet messaging system. 8-4-2-8-4-6-4 is not available. At the tone please record your pet. When you are finished recording you may hang up, or press snoot for more options. *beep*`',
+            13: explosion_response(message),
+            14: 'O-Oh, okay...',
         }
         await message.channel.send(case_dict.get(response, "# ***EXPLODES***"))
+
+async def explosion_response(message):
+    result = random.randint(1, 15)
+    if result == 1:
+        await message.channel.send("# ***EXPLODES***")
+    else:
+        await message.channel.send("*squeak* /)~(\\")
 
 @bot.event
 async def on_ready():
