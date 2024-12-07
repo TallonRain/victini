@@ -16,7 +16,7 @@ Secondary functions include some user-facing commands, invoked using the `!` prf
 
 ### Installation & Requirements
 
-Currently, you must populate a `.env` file with two values:
+Currently, you must populate a `.env` file with three values:
 
 - `DISCORD_TOKEN`: must be populated with the bot's auth token from the developer portal
 - `VWHEEL_CHANNEL_ID`: must have the channel ID of the v-wheel channel
