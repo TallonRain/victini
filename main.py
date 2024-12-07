@@ -77,17 +77,17 @@ async def on_message(message):
             10: '*is petted* >///<',
             11: 'Please do not tap on the glass.',
             12: '`Your pet has been forwarded to an automated pet messaging system. 8-4-2-8-4-6-4 is not available. At the tone please record your pet. When you are finished recording you may hang up, or press snoot for more options. *beep*`',
-            13: await explosion_response(message),
+            13: await explosion_response(),
             14: 'O-Oh, okay...',
         }
         await message.channel.send(case_dict.get(response, "# ***EXPLODES***"))
 
-async def explosion_response(message):
+async def explosion_response():
     result = random.randint(1, 15)
     if result == 1:
-        await message.channel.send("# ***EXPLODES***")
+        return "# ***EXPLODES***"
     else:
-        await message.channel.send("*squeak* /)~(\\")
+        return "*squeak* /)~(\\"
 
 @bot.event
 async def on_ready():
