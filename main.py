@@ -83,7 +83,7 @@ async def on_message(message):
         await message.channel.send(case_dict.get(response, "# ***EXPLODES***"))
 
 async def explosion_response():
-    result = random.randint(1, 15)
+    result = random.randint(1, 4)
     if result == 1:
         return "# ***EXPLODES***"
     else:
