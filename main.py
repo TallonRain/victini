@@ -12,7 +12,7 @@ import random
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 VWHEEL_CHANNEL_ID = int(os.getenv('VWHEEL_CHANNEL_ID'))
-DEBUG_MODE = bool(os.getenv('DEBUG_MODE'))
+DEBUG_MODE = bool(int(os.getenv('DEBUG_MODE')))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,7 +21,7 @@ intents.presences = True
 
 bot = commands.Bot(command_prefix='!', intents=intents, activity=discord.Game("with the V-Wheeeeeel~!"))
 
-# Set trigger time: Noon PST -> 20:00 UTC (adjust as needed)
+# Set trigger time
 pacific = ZoneInfo("America/Los_Angeles")
 trigger_time = datetime.time(hour=9, minute=00, tzinfo=pacific)
 v_wheel_channel = None
