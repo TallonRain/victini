@@ -70,20 +70,20 @@ async def on_message(message):
             3: 'Huh...? Is there something on my head?',
             4: 'Huh? What? ...You\'re weird.',
             5: 'No touchy!! >n<',
-            6: 'Thanks, but I\'m not going to let you change the V-wave.',
+            6: 'Thanks, but I\'m not going to let you change the V-wave. Definitely.',
             7: 'I-I\'m not a pet... >///>',
             8: 'Careful, my fur might burn you!',
             9: '♪',
             10: '*is petted* >///<',
-            11: 'Please do not tap on the glass.',
-            12: '`Your pet has been forwarded to an automated pet messaging system. 8-4-2-8-4-6-4 is not available. At the tone please record your pet. When you are finished recording you may hang up, or press snoot for more options. *beep*`',
+            11: 'Hey, you could instead try spinning the V-Wheeeeeeeeeeeeeeeel!!.',
+            12: 'Are you looking for the V-Wavecast? Maybe?',
             13: await explosion_response(),
             14: 'O-Oh, okay...',
         }
         await message.channel.send(case_dict.get(response, "# ***EXPLODES***"))
 
 async def explosion_response():
-    result = random.randint(1, 4)
+    result = random.randint(1, 2)
     if result == 1:
         return "# ***EXPLODES***"
     else:
