@@ -6,9 +6,11 @@ Victini's primary function is to spin the [V-Wheel](https://bulbapedia.bulbagard
 
 Secondary functions include some user-facing commands, invoked using the `!` prfix or as aslash commands. The current list of available commands are as follows:
 
-| ! Commands | Effects                                 | Permissions |
-|------------|-----------------------------------------|-------------|
-| !pet       | Pets Victini (They might not like that) | Everyone    |
+| ! Commands | Effects                                                   | Permissions |
+|------------|-----------------------------------------------------------|-------------|
+| !pet       | Pets Victini (They might not like that)                   | Everyone    |
+| !wavecast  | Gives the V-Wave forecast (Not guaranteed to be accurate) | Everyone    |
+| !spin      | Don't like the result? Spin the V-Wheel!                  | Everyone    |
 ----
 | Slash Commands | Effects                      | Permissions    |
 |----------------|------------------------------|----------------|
