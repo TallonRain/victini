@@ -50,7 +50,7 @@ async def spin_wheel():
         print("Fetched the role ID successfully")
         await role.edit(hoist=not role.hoist) # inverts the current setting
     else:
-        print("Error fetching server roles, cannot hoist the v-wheel winner")
+        print("Error fetching server roles, cannot hoist the V-Wheel winner")
 
 @bot.event
 async def on_ready():
@@ -66,7 +66,7 @@ async def on_message(message):
 
     if message.content.startswith('!wavecast'):
         poke_type = random.choice(const_types)
-        await message.channel.send(f"Here's the V-Wavecast! Tomorrow's V-wave is {poke_type}! Probably. Maybe.")
+        await message.channel.send(f"Here's the V-Wavecast! Tomorrow's V-Wave is {poke_type}! Probably. Maybe.")
 
     ## Teeny tini doesn't want to be touched
     if message.content.startswith('!pet'):
@@ -77,12 +77,12 @@ async def on_message(message):
             3: 'Huh...? Is there something on my head?',
             4: 'Huh? What? ...You\'re weird.',
             5: 'No touchy!! >n<',
-            6: 'Thanks, but I\'m not going to let you change the V-wave. Definitely.',
+            6: 'Thanks, but I\'m not going to let you change the V-Wave. Definitely.',
             7: 'I-I\'m not a pet... >///>',
             8: 'Careful, my fur might burn you!',
             9: '♪',
-            10: '*is petted* >///<',
-            11: 'Hey, you could instead try spinning the V-Wheeeeeeeeeeeeeeeel!!.',
+            10: '*squeak* /)~(\\',
+            11: 'Hey, you could instead try spinning the V-Wheel!',
             12: 'Are you looking for the V-Wavecast? Maybe?',
             13: await explosion_response(),
             14: 'O-Oh, okay...',
@@ -94,7 +94,7 @@ async def explosion_response():
     if result == 1:
         return "# ***EXPLODES***"
     else:
-        return "*squeak* /)~(\\"
+        return "<:VictiniPet:1317408257652031580>"
 
 @bot.event
 async def on_ready():
