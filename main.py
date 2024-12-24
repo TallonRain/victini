@@ -44,20 +44,17 @@ def generate_wavecast():
     save_wavecast()
 
 def save_wavecast():
-    writeable_wavecast = wavecast.copy()
-    for i in range(len(writeable_wavecast)):
-        if i < len(writeable_wavecast) - 1: writeable_wavecast[i] += "\n"
     with open("wavecast.vwheel", "w+") as file:
-        file.writelines(writeable_wavecast)
+        for item in wavecast:
+            file.writelines([f"{item},"]) # for some reason, file.write() here causes something to go horribly wrong during spin_wheel and would save an empty file
     file.close()
     print("Wavecast saved!")
 
 def load_wavecast():
     with open("wavecast.vwheel", "r") as file:
-        read_wavecast = file.readlines()
+        wavecast = file.read().split(",", 6)
     file.close()
-    for line in read_wavecast:
-        wavecast.append(line.rstrip())
+    wavecast[-1] = wavecast[-1].rstrip(",")
     print(f"Wavecast loaded: {wavecast}")
 
 def cycle_wavecast():
@@ -67,8 +64,7 @@ def cycle_wavecast():
     wavecast.append(next_type)
     return wavecast.pop(0)
 
-# async
-
+# async bot functions
 async def setup_hook(self) -> None:
     self.spin_wheel.start()
 
@@ -81,8 +77,7 @@ async def spin_wheel():
             await role.edit(hoist=False)
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
-    #vwheel_type = secrets.choice(const_types) # spiiiiiinnnnnnn
-    vwheel_type = cycle_wavecast()
+    vwheel_type = cycle_wavecast() # spiiiiiinnnnnnn
     await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type) # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id) # format it as a Discord object so it can be manipulated
@@ -138,7 +133,10 @@ async def explosion_response():
 async def on_ready():
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
-    load_wavecast()
+    if os.path.isfile("wavecast.vwheel"):
+        load_wavecast()
+    else:
+        generate_wavecast()
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID) # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
