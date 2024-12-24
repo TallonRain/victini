@@ -161,7 +161,9 @@ async def show_wavecast(interaction:discord.Interaction):
     await interaction.response.defer(ephemeral=True, thinking=True)
     wavecast_message = f"# Wavecast\n"
     for i in range(len(wavecast)):
-        wavecast_message += f"{i+1}. {wavecast[i]}\n"
+        wavecast_message += f"{i+1}. {wavecast[i]}"
+        if i == 0: wavecast_message += " **(Up next!)**"
+        wavecast_message += "\n"
     wavecast_message.rstrip()
     await interaction.edit_original_response(content = wavecast_message)
 
