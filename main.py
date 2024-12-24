@@ -155,6 +155,16 @@ async def forcespin(interaction: discord.Interaction):
     await spin_wheel()
     await interaction.edit_original_response(content = "Fine, I've spun the V-Wheeeeeel~!")
 
+@bot.tree.command(name = "wavecast")
+@app_commands.default_permissions()
+async def show_wavecast(interaction:discord.Interaction):
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    wavecast_message = f"# Wavecast\n"
+    for i in range(len(wavecast)):
+        wavecast_message += f"{i+1}. {wavecast[i]}\n"
+    wavecast_message.rstrip()
+    await interaction.edit_original_response(content = wavecast_message)
+
 # fixup addresses a fatal SSL & authentication bug in Discord.py
 fixup.run(bot, DISCORD_TOKEN)
 
