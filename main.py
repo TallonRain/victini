@@ -44,18 +44,20 @@ def generate_wavecast():
     save_wavecast()
 
 def save_wavecast():
-    with open("wavecast.vwheel", "w+") as file:
+    with open("wavecast.vwheel", "w") as file:
         for item in wavecast:
-            file.writelines([f"{item},"]) # for some reason, file.write() here causes something to go horribly wrong during spin_wheel and would save an empty file
+            file.write(f"{item},")
     file.close()
     print("Wavecast saved!")
 
 def load_wavecast():
+    loaded_wavecast = []
     with open("wavecast.vwheel", "r") as file:
-        wavecast = file.read().split(",", 6)
+        loaded_wavecast = file.read().split(",", 6)
     file.close()
-    wavecast[-1] = wavecast[-1].rstrip(",")
-    print(f"Wavecast loaded: {wavecast}")
+    loaded_wavecast[-1] = loaded_wavecast[-1].rstrip(",")
+    print(f"Wavecast loaded: {loaded_wavecast}")
+    return loaded_wavecast
 
 def cycle_wavecast():
     next_type = ""
@@ -86,7 +88,6 @@ async def spin_wheel():
         await role.edit(hoist=not role.hoist) # inverts the current setting
     else:
         print("Error fetching server roles, cannot hoist the V-Wheel winner")
-    # save new wavecast after affairs are handled
     save_wavecast()
 
 @bot.event
@@ -134,7 +135,7 @@ async def on_ready():
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
     if os.path.isfile("wavecast.vwheel"):
-        load_wavecast()
+        wavecast.extend(load_wavecast())
     else:
         generate_wavecast()
     spin_wheel.start()
