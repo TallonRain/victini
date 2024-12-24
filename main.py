@@ -54,10 +54,6 @@ async def spin_wheel():
         print("Error fetching server roles, cannot hoist the V-Wheel winner")
 
 @bot.event
-async def on_ready():
-    print(f'{bot.user} has logged into Discord!')
-
-@bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
