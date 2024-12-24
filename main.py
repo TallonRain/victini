@@ -7,6 +7,7 @@ import fixup
 import datetime
 from zoneinfo import ZoneInfo
 import random
+import secrets
 
 # Load environment variables from the .env file (if present) and declare the variable
 load_dotenv()
@@ -42,7 +43,7 @@ async def spin_wheel():
             await role.edit(hoist=False)
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
-    vwheel_type = random.choice(const_types) # spiiiiiinnnnnnn
+    vwheel_type = secrets.choice(const_types) # spiiiiiinnnnnnn
     await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type) # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id) # format it as a Discord object so it can be manipulated
@@ -94,7 +95,7 @@ async def explosion_response():
     if result == 1:
         return "# ***EXPLODES***"
     else:
-        return "<:VictiniPet:1317408257652031580>"
+        return "<a:VictiniPet:1317408257652031580>"
 
 @bot.event
 async def on_ready():
