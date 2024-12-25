@@ -30,7 +30,43 @@ v_wheel_channel = None
 # list of server roles
 type_roles = {}
 const_types = ["Normal Type", "Fire Type", "Water Type", "Grass Type", "Electric Type", "Ice Type", "Fighting Type", "Poison Type", "Ground Type", "Flying Type", "Psychic Type", "Bug Type", "Rock Type", "Ghost Type", "Dragon Type", "Dark Type", "Steel Type", "Fairy Type"]
+wavecast = []
 
+# wavecast functions
+def generate_wavecast():
+    for i in range(7):
+        next_type = ""
+        while next_type == "" or next_type in wavecast:
+            next_type = random.choice(const_types)
+        wavecast.append(next_type)
+    print(f"Wavecast generated: {wavecast}\nAttempting save...")
+    # save generated wavecast to a file
+    save_wavecast()
+
+def save_wavecast():
+    with open("wavecast.vwheel", "w") as file:
+        for item in wavecast:
+            file.write(f"{item},")
+    file.close()
+    print("Wavecast saved!")
+
+def load_wavecast():
+    loaded_wavecast = []
+    with open("wavecast.vwheel", "r") as file:
+        loaded_wavecast = file.read().split(",", 6)
+    file.close()
+    loaded_wavecast[-1] = loaded_wavecast[-1].rstrip(",")
+    print(f"Wavecast loaded: {loaded_wavecast}")
+    return loaded_wavecast
+
+def cycle_wavecast():
+    next_type = ""
+    while next_type == "" or next_type in wavecast:
+        next_type = random.choice(const_types)
+    wavecast.append(next_type)
+    return wavecast.pop(0)
+
+# async bot functions
 async def setup_hook(self) -> None:
     self.spin_wheel.start()
 
@@ -43,7 +79,7 @@ async def spin_wheel():
             await role.edit(hoist=False)
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
-    vwheel_type = secrets.choice(const_types) # spiiiiiinnnnnnn
+    vwheel_type = cycle_wavecast() # spiiiiiinnnnnnn
     await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type) # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id) # format it as a Discord object so it can be manipulated
@@ -52,10 +88,7 @@ async def spin_wheel():
         await role.edit(hoist=not role.hoist) # inverts the current setting
     else:
         print("Error fetching server roles, cannot hoist the V-Wheel winner")
-
-@bot.event
-async def on_ready():
-    print(f'{bot.user} has logged into Discord!')
+    save_wavecast()
 
 @bot.event
 async def on_message(message):
@@ -101,6 +134,10 @@ async def explosion_response():
 async def on_ready():
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
+    if os.path.isfile("wavecast.vwheel"):
+        wavecast.extend(load_wavecast())
+    else:
+        generate_wavecast()
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID) # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
@@ -117,6 +154,18 @@ async def forcespin(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True, thinking=True)
     await spin_wheel()
     await interaction.edit_original_response(content = "Fine, I've spun the V-Wheeeeeel~!")
+
+@bot.tree.command(name = "wavecast")
+@app_commands.default_permissions()
+async def show_wavecast(interaction:discord.Interaction):
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    wavecast_message = f"# Wavecast\n"
+    for i in range(len(wavecast)):
+        wavecast_message += f"{i+1}. {wavecast[i]}"
+        if i == 0: wavecast_message += " **(Up next!)**"
+        wavecast_message += "\n"
+    wavecast_message.rstrip()
+    await interaction.edit_original_response(content = wavecast_message)
 
 # fixup addresses a fatal SSL & authentication bug in Discord.py
 fixup.run(bot, DISCORD_TOKEN)
