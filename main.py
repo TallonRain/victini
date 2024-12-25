@@ -7,13 +7,13 @@ import fixup
 import datetime
 from zoneinfo import ZoneInfo
 import random
-import secrets
 
 # Load environment variables from the .env file (if present) and declare the variable
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 VWHEEL_CHANNEL_ID = int(os.getenv('VWHEEL_CHANNEL_ID'))
 DEBUG_MODE = bool(int(os.getenv('DEBUG_MODE')))
+FILE_STORAGE = os.getenv('FILE_STORAGE')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -44,7 +44,7 @@ def generate_wavecast():
     save_wavecast()
 
 def save_wavecast():
-    with open("wavecast.vwheel", "w") as file:
+    with open(FILE_STORAGE + "wavecast.vwheel", "w") as file:
         for item in wavecast:
             file.write(f"{item},")
     file.close()
