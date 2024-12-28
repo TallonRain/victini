@@ -30,41 +30,56 @@ v_wheel_channel = None
 # list of server roles
 type_roles = {}
 const_types = ["Normal Type", "Fire Type", "Water Type", "Grass Type", "Electric Type", "Ice Type", "Fighting Type", "Poison Type", "Ground Type", "Flying Type", "Psychic Type", "Bug Type", "Rock Type", "Ghost Type", "Dragon Type", "Dark Type", "Steel Type", "Fairy Type"]
-wavecast = []
+wavecast = { "bag": None, "queue": None } # filled with lists later!
 
 # wavecast functions
 def generate_wavecast():
-    for i in range(7):
-        next_type = ""
-        while next_type == "" or next_type in wavecast:
-            next_type = random.choice(const_types)
-        wavecast.append(next_type)
+    wavecast["bag"] = const_types.copy() # fill the bag!
+    wavecast["queue"] = []
+    for _ in range(7):
+        index = random.randint(0, len(wavecast["bag"])-1) # grab a random index from the bag!
+        next_type = wavecast["bag"].pop(index) # grab the type from the random index!
+        wavecast["queue"].append(next_type) # add it to the queue
     print(f"Wavecast generated: {wavecast}\nAttempting save...")
     # save generated wavecast to a file
     save_wavecast()
 
 def save_wavecast():
     with open(FILE_STORAGE + "wavecast.vwheel", "w") as file:
-        for item in wavecast:
+        for item in wavecast["queue"]: # save the queue first! always 7 elements
             file.write(f"{item},")
-    file.close()
+        for item in wavecast["bag"]: # save the bag next! variable number of elements (0 <= len(bag) <= 11)
+            file.write(f"{item},")
+    # ending the "with open()" block auto-closes the file, no need to manually close
     print("Wavecast saved!")
 
 def load_wavecast():
-    loaded_wavecast = []
+    loaded_wavecast = None
     with open("wavecast.vwheel", "r") as file:
-        loaded_wavecast = file.read().split(",", 6)
-    file.close()
-    loaded_wavecast[-1] = loaded_wavecast[-1].rstrip(",")
-    print(f"Wavecast loaded: {loaded_wavecast}")
-    return loaded_wavecast
+        loaded_wavecast = file.read().rstrip(",").split(",") # read both bag and queue!
+    wavecast["queue"] = loaded_wavecast[:7] # slice off the first seven elements for the queue
+    wavecast["bag"] = loaded_wavecast[7:] # slice the rest for the queue
+
+    # a wavecast is deemed corrupt if:
+    # - the queue is not exactly seven elements long
+    # - the wavecast has a type that doesn't exist (not in const_types)
+    if (len(wavecast["queue"]) == 7 and \
+        all(t in const_types for t in wavecast["queue"] + wavecast["bag"])):
+        # all checks clear!
+        print(f"Wavecast loaded: {wavecast}")
+    else:
+        print("Huh? The Wavecast file was corrupt... whatever! Generating a new Wavecast!")
+        generate_wavecast()
+    return
 
 def cycle_wavecast():
-    next_type = ""
-    while next_type == "" or next_type in wavecast:
-        next_type = random.choice(const_types)
-    wavecast.append(next_type)
-    return wavecast.pop(0)
+    if len(wavecast["bag"]) == 0: # is bag empty?
+        wavecast["bag"].extend(const_types)  # fill the bag!
+    index = random.randint(0, len(wavecast["bag"])-1) # grab a random index from the bag!
+    next_type = wavecast["bag"].pop(index) # grab the type from the random index!
+    wavecast["queue"].append(next_type) # add it to the queue
+    # queue now has 8 elements! pop to reduce it back to 7
+    return wavecast["queue"].pop(0)
 
 # async bot functions
 async def setup_hook(self) -> None:
@@ -135,7 +150,7 @@ async def on_ready():
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
     if os.path.isfile("wavecast.vwheel"):
-        wavecast.extend(load_wavecast())
+        load_wavecast()
     else:
         generate_wavecast()
     spin_wheel.start()
@@ -160,8 +175,8 @@ async def forcespin(interaction: discord.Interaction):
 async def show_wavecast(interaction:discord.Interaction):
     await interaction.response.defer(ephemeral=True, thinking=True)
     wavecast_message = f"# Wavecast\n"
-    for i in range(len(wavecast)):
-        wavecast_message += f"{i+1}. {wavecast[i]}"
+    for i in range(len(wavecast["queue"])):
+        wavecast_message += f"{i+1}. {wavecast["queue"][i]}"
         if i == 0: wavecast_message += " **(Up next!)**"
         wavecast_message += "\n"
     wavecast_message.rstrip()
