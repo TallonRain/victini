@@ -147,6 +147,8 @@ async def explosion_response():
 
 @bot.event
 async def on_ready():
+    if DEBUG_MODE:
+        print("DEBUG MODE ENABLED")
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
     if os.path.isfile("wavecast.vwheel"):
