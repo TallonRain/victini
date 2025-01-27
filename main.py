@@ -120,10 +120,6 @@ async def on_message(message):
         await message.channel.send(
             'Let\'s spin the V-Wheee- oh, you don\'t have any <:poke:1317397305615323196>? Can\'t spin it, then.')
 
-    if message.content.startswith('!wavecast'):
-        poke_type = random.choice(const_types)
-        await message.channel.send(f"Here's the V-Wavecast! Tomorrow's V-Wave is {poke_type}! Probably. Maybe.")
-
     ## Teeny tini doesn't want to be touched
     if message.content.startswith('!pet'):
         response = random.randrange(1, 15)
