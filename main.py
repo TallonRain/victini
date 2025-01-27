@@ -172,6 +172,9 @@ async def on_ready():
 
 @bot.command(name="forcespin", description="Forces a fresh spin of the V-Wheel!")
 async def forcespin(ctx):
+    if ctx.guild is None:
+        await ctx.respond("This command cannot be used in DMs.", ephemeral=True)
+        return
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You do not have permission to use this command.", ephemeral=True)
         return
@@ -181,6 +184,9 @@ async def forcespin(ctx):
 
 @bot.command(name="wavecast", description="Fetch the full V-Wavecast!")
 async def show_wavecast(ctx):
+    if ctx.guild is None:
+        await ctx.respond("This command cannot be used in DMs.", ephemeral=True)
+        return
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You do not have permission to use this command.", ephemeral=True)
         return
@@ -195,6 +201,9 @@ async def show_wavecast(ctx):
 
 @bot.command(name="futuresight", description="Use the move Future Sight to learn tomorrow's v-wave")
 async def futuresight(ctx):
+    if ctx.guild is None:
+        await ctx.respond("This command cannot be used in DMs.", ephemeral=True)
+        return
     user = ctx.user
     wavecast_message = f"You used Future Sight!\n"
     if discord.utils.get(user.roles, name="Psychic Type"):
