@@ -171,15 +171,19 @@ async def on_ready():
 
 
 @bot.command(name="forcespin", description="Forces a fresh spin of the V-Wheel!")
-@commands.has_permissions(administrator=True)
 async def forcespin(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You do not have permission to use this command.", ephemeral=True)
+        return
     await spin_wheel()
     await ctx.respond(content="Fine, I've spun the V-Wheeeeeel~!", ephemeral=True)
 
 
 @bot.command(name="wavecast", description="Fetch the full V-Wavecast!")
-@commands.has_permissions(administrator=True)
 async def show_wavecast(ctx):
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You do not have permission to use this command.", ephemeral=True)
+        return
     wavecast_message = f"# Wavecast\n"
     for i in range(len(wavecast["queue"])):
         wavecast_message += f"{i + 1}. {wavecast["queue"][i]}"
