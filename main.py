@@ -175,12 +175,14 @@ async def on_ready():
 
 
 @bot.command(name="forcespin", description="Forces a fresh spin of the V-Wheel!")
+@commands.has_permissions(administrator=True)
 async def forcespin(ctx):
     await spin_wheel()
     await ctx.respond(content="Fine, I've spun the V-Wheeeeeel~!", ephemeral=True)
 
 
 @bot.command(name="wavecast", description="Fetch the full V-Wavecast!")
+@commands.has_permissions(administrator=True)
 async def show_wavecast(ctx):
     wavecast_message = f"# Wavecast\n"
     for i in range(len(wavecast["queue"])):
