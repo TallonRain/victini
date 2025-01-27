@@ -1,6 +1,6 @@
 # Victini
 
-A Discord bot written in Python using [Discord.py](https://github.com/Rapptz/discord.py)
+A Discord bot written in Python using [Pycord](https://pycord.dev)
 
 Victini's primary function is to spin the [V-Wheel](https://bulbapedia.bulbagarden.net/wiki/Victini_(Gates_to_Infinity)) daily and hoist the relevant Pokémon type roles (Fire, Grass, Electric, etc.) in the server for 24 hours.
 
