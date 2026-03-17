@@ -6,6 +6,7 @@ import fixup
 import datetime
 from zoneinfo import ZoneInfo
 import random
+from wavecast import Wavecast, const_types
 
 # Load environment variables from the .env file (if present) and declare the variable
 load_dotenv()
@@ -26,63 +27,8 @@ v_wheel_channel = None
 
 # list of server roles
 type_roles = {}
-const_types = ["Normal Type", "Fire Type", "Water Type", "Grass Type", "Electric Type", "Ice Type", "Fighting Type",
-               "Poison Type", "Ground Type", "Flying Type", "Psychic Type", "Bug Type", "Rock Type", "Ghost Type",
-               "Dragon Type", "Dark Type", "Steel Type", "Fairy Type"]
-wavecast = {"bag": None, "queue": None}  # filled with lists later!
-
-
-# wavecast functions
-def generate_wavecast():
-    wavecast["bag"] = const_types.copy()  # fill the bag!
-    wavecast["queue"] = []
-    for _ in range(7):
-        index = random.randint(0, len(wavecast["bag"]) - 1)  # grab a random index from the bag!
-        next_type = wavecast["bag"].pop(index)  # grab the type from the random index!
-        wavecast["queue"].append(next_type)  # add it to the queue
-    print(f"Wavecast generated: {wavecast}\nAttempting save...")
-    # save generated wavecast to a file
-    save_wavecast()
-
-
-def save_wavecast():
-    with open(FILE_STORAGE + "wavecast.vwheel", "w") as file:
-        for item in wavecast["queue"]:  # save the queue first! always 7 elements
-            file.write(f"{item},")
-        for item in wavecast["bag"]:  # save the bag next! variable number of elements (0 <= len(bag) <= 11)
-            file.write(f"{item},")
-    # ending the "with open()" block auto-closes the file, no need to manually close
-    print("Wavecast saved!")
-
-
-def load_wavecast():
-    loaded_wavecast = None
-    with open(FILE_STORAGE + "wavecast.vwheel", "r") as file:
-        loaded_wavecast = file.read().rstrip(",").split(",")  # read both bag and queue!
-    wavecast["queue"] = loaded_wavecast[:7]  # slice off the first seven elements for the queue
-    wavecast["bag"] = loaded_wavecast[7:]  # slice the rest for the queue
-
-    # a wavecast is deemed corrupt if:
-    # - the queue is not exactly seven elements long
-    # - the wavecast has a type that doesn't exist (not in const_types)
-    if (len(wavecast["queue"]) == 7 and \
-            all(t in const_types for t in wavecast["queue"] + wavecast["bag"])):
-        # all checks clear!
-        print(f"Wavecast loaded: {wavecast}")
-    else:
-        print("Huh? The Wavecast file was corrupt... whatever! Generating a new Wavecast!")
-        generate_wavecast()
-    return
-
-
-def cycle_wavecast():
-    if len(wavecast["bag"]) == 0:  # is bag empty?
-        wavecast["bag"].extend(const_types)  # fill the bag!
-    index = random.randint(0, len(wavecast["bag"]) - 1)  # grab a random index from the bag!
-    next_type = wavecast["bag"].pop(index)  # grab the type from the random index!
-    wavecast["queue"].append(next_type)  # add it to the queue
-    # queue now has 8 elements! pop to reduce it back to 7
-    return wavecast["queue"].pop(0)
+wavecast = Wavecast()
+wavecast_filepath = None
 
 
 # async bot functions
@@ -99,7 +45,7 @@ async def spin_wheel():
             await role.edit(hoist=False)
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
-    vwheel_type = cycle_wavecast()  # spiiiiiinnnnnnn
+    vwheel_type = wavecast.cycle()  # spiiiiiinnnnnnn
     await v_wheel_channel.send(f"Today's V-Wave type is... {vwheel_type}! Go say hi to the lucky {vwheel_type}s!")
     role_id = type_roles.get(vwheel_type)  # fetch the roleID of the winner
     role = bot.guilds[0].get_role(role_id)  # format it as a Discord object so it can be manipulated
@@ -108,7 +54,7 @@ async def spin_wheel():
         await role.edit(hoist=not role.hoist)  # inverts the current setting
     else:
         print("Error fetching server roles, cannot hoist the V-Wheel winner")
-    save_wavecast()
+    wavecast.save(wavecast_filepath)
 
 
 @bot.event
@@ -156,10 +102,13 @@ async def on_ready():
         print("DEBUG MODE ENABLED")
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
-    if os.path.isfile(FILE_STORAGE + "wavecast.vwheel"):
-        load_wavecast()
+    global wavecast_filepath
+    wavecast_filepath = FILE_STORAGE + "wavecast.vwheel"
+    if os.path.isfile(wavecast_filepath):
+        wavecast.load(wavecast_filepath)
     else:
-        generate_wavecast()
+        wavecast.generate()
+        wavecast.save(wavecast_filepath)
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID)  # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
@@ -191,8 +140,8 @@ async def show_wavecast(ctx):
         await ctx.respond("You do not have permission to use this command.", ephemeral=True)
         return
     wavecast_message = f"# Wavecast\n"
-    for i in range(len(wavecast["queue"])):
-        wavecast_message += f"{i + 1}. {wavecast["queue"][i]}"
+    for i in range(len(wavecast.queue)):
+        wavecast_message += f"{i + 1}. {wavecast.queue[i]}"
         if i == 0: wavecast_message += " **(Up next!)**"
         wavecast_message += "\n"
     wavecast_message.rstrip()
@@ -207,7 +156,7 @@ async def futuresight(ctx):
     user = ctx.user
     wavecast_message = f"You used Future Sight!\n"
     if discord.utils.get(user.roles, name="Psychic Type"):
-        wavecast_message += f"You foresee that the next v-wave could be... {wavecast["queue"][0]}!"
+        wavecast_message += f"You foresee that the next v-wave could be... {wavecast.queue[0]}!"
     else:
         wavecast_message += f"You get the feeling that the next v-wheel is {random.choice(const_types)}... you think...\n"
     wavecast_message.rstrip()
