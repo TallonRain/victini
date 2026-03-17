@@ -40,9 +40,17 @@ async def setup_hook(self) -> None:
 async def spin_wheel():
     print("Activating the V-Wheel!!")
     # need to iterate through the roles so that the previous winner can be dehoisted automatically
-    for role in bot.guilds[0].roles:
-        if role.name in const_types:
-            await role.edit(hoist=False)
+    try:
+        for role in bot.guilds[0].roles:
+            if role.name in const_types:
+                await role.edit(hoist=False)
+    except discord.Forbidden:
+        owner = bot.guilds[0].owner
+        await owner.send(
+            "Hey! I don't have permission to manage roles. "
+            "Please make sure my role is above the type roles in Server Settings > Roles!"
+        )
+        return
     await v_wheel_channel.send("https://i.imgur.com/3EZpMlF.gif")
     await v_wheel_channel.send("It's time to spin the V-Wheeeeeeeeeeeeeeeel!")
     vwheel_type = wavecast.cycle()  # spiiiiiinnnnnnn
@@ -51,7 +59,14 @@ async def spin_wheel():
     role = bot.guilds[0].get_role(role_id)  # format it as a Discord object so it can be manipulated
     if role is not None:
         print("Fetched the role ID successfully")
-        await role.edit(hoist=not role.hoist)  # inverts the current setting
+        try:
+            await role.edit(hoist=not role.hoist)  # inverts the current setting
+        except discord.Forbidden:
+            owner = bot.guilds[0].owner
+            await owner.send(
+                f"Hey! I couldn't hoist the {vwheel_type} role. "
+                "Please make sure my role is above the type roles in Server Settings > Roles!"
+            )
     else:
         print("Error fetching server roles, cannot hoist the V-Wheel winner")
     wavecast.save(wavecast_filepath)
