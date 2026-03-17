@@ -142,8 +142,22 @@ async def forcespin(ctx):
     if not ctx.author.guild_permissions.administrator:
         await ctx.respond("You do not have permission to use this command.", ephemeral=True)
         return
+    await ctx.defer(ephemeral=True)
     await spin_wheel()
-    await ctx.respond(content="Fine, I've spun the V-Wheeeeeel~!", ephemeral=True)
+    await ctx.followup.send(content="Fine, I've spun the V-Wheeeeeel~!", ephemeral=True)
+
+
+@bot.command(name="reroll", description="Throw away the current wavecast and generate a fresh one!")
+async def reroll(ctx):
+    if ctx.guild is None:
+        await ctx.respond("This command cannot be used in DMs.", ephemeral=True)
+        return
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.respond("You do not have permission to use this command.", ephemeral=True)
+        return
+    wavecast.generate()
+    wavecast.save(wavecast_filepath)
+    await ctx.respond(content="Done! I've re-rolled a brand new wavecast~!", ephemeral=True)
 
 
 @bot.command(name="wavecast", description="Fetch the full V-Wavecast!")
