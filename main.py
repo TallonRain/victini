@@ -57,7 +57,7 @@ def save_wavecast():
 
 def load_wavecast():
     loaded_wavecast = None
-    with open("wavecast.vwheel", "r") as file:
+    with open(FILE_STORAGE + "wavecast.vwheel", "r") as file:
         loaded_wavecast = file.read().rstrip(",").split(",")  # read both bag and queue!
     wavecast["queue"] = loaded_wavecast[:7]  # slice off the first seven elements for the queue
     wavecast["bag"] = loaded_wavecast[7:]  # slice the rest for the queue
@@ -156,7 +156,7 @@ async def on_ready():
         print("DEBUG MODE ENABLED")
     global v_wheel_channel
     print(f"{bot.user} has logged into Discord! Setting up...")
-    if os.path.isfile("wavecast.vwheel"):
+    if os.path.isfile(FILE_STORAGE + "wavecast.vwheel"):
         load_wavecast()
     else:
         generate_wavecast()
