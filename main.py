@@ -119,16 +119,20 @@ async def on_ready():
     print(f"{bot.user} has logged into Discord! Setting up...")
     global wavecast_filepath
     wavecast_filepath = FILE_STORAGE + "wavecast.vwheel"
+    wavecast_regenerated = False
     if os.path.isfile(wavecast_filepath):
         wavecast.load(wavecast_filepath)
     else:
         wavecast.generate()
         wavecast.save(wavecast_filepath)
+        wavecast_regenerated = True
     spin_wheel.start()
     v_wheel_channel = await bot.fetch_channel(VWHEEL_CHANNEL_ID)  # channel id, as an int, goes here
     print(f"Found the {v_wheel_channel} channel, saying hi!")
     if not DEBUG_MODE:  # only send this message when we are NOT in debug mode
         await v_wheel_channel.send("Tadaaaa~! It's me, Victini~!")
+    if wavecast_regenerated:
+        await v_wheel_channel.send("Hmm, I couldn't find my wavecast file, so I generated a fresh one!")
     for role in bot.guilds[0].roles:
         type_roles[role.name] = role.id  # fetch the server's roles and put them in a dictionary with the name and ID
         print(f"Role Name: {role.name} | Role ID: {role.id}")
